@@ -2,8 +2,8 @@ package engine.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,16 +11,24 @@ public class Quiz {
     @JsonIgnore
     private static int nextInt = 1;
     private int id;
+
+    @NotEmpty
     private String title;
+
+    @NotEmpty
     private String text;
+
+    @Size(min = 2)
+    @NotEmpty
     private List<String> options;
+
     @JsonIgnore
-    private int answer;
+    private List<Integer> answer;
 
     public Quiz() {
     }
 
-    public Quiz(String title, String text, List<String> options, int answer) {
+    public Quiz(@NotBlank String title, @NotBlank String text, List<String> options, List<Integer> answer) {
         this.id = nextInt++;
         this.title = title;
         this.text = text;
@@ -60,13 +68,21 @@ public class Quiz {
         this.options = options;
     }
 
-    public int getAnswer() {
+    public List<Integer> getAnswer() {
         return answer;
     }
 
-    public void setAnswer(int answer) {
+    public void setAnswer(List<Integer> answer) {
         this.answer = answer;
     }
+
+    //    public int getAnswer() {
+//        return answer;
+//    }
+//
+//    public void setAnswer(int answer) {
+//        this.answer = answer;
+//    }
 
     @Override
     public boolean equals(Object o) {

@@ -454,6 +454,333 @@ files:
         }
     }
   learner_created: false
+- name: src/engine/dto/CreateNewQuiz.java
+  visible: true
+  text: |
+    package engine.dto;
+
+    import javax.validation.constraints.Max;
+    import javax.validation.constraints.Min;
+    import java.util.List;
+
+    public class CreateNewQuiz {
+
+        private String title;
+        private String text;
+        private List<String> options;
+
+        @Min(value = 0)
+        @Max(value = 4)
+        private int answer;
+
+        public CreateNewQuiz() {
+        }
+
+        public CreateNewQuiz(String title, String text, List<String> options, int answer) {
+            this.title = title;
+            this.text = text;
+            this.options = options;
+            this.answer = answer;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public List<String> getOptions() {
+            return options;
+        }
+
+        public void setOptions(List<String> options) {
+            this.options = options;
+        }
+
+        public int getAnswer() {
+            return answer;
+        }
+
+        public void setAnswer(int answer) {
+            this.answer = answer;
+        }
+    }
+  learner_created: true
+- name: src/engine/QuizStorage.java
+  visible: true
+  text: |
+    package engine;
+
+    import com.fasterxml.jackson.annotation.JsonIgnore;
+    import com.fasterxml.jackson.annotation.JsonUnwrapped;
+    import engine.entities.Quiz;
+    import org.springframework.stereotype.Component;
+
+    import java.util.ArrayList;
+    import java.util.List;
+
+    @Component
+    public class QuizStorage {
+
+        @JsonUnwrapped
+        private List<Quiz> quizList;
+
+        public QuizStorage() {
+            this.quizList = new ArrayList<>();
+        }
+
+        public void addQuiz(Quiz quiz) {
+            this.quizList.add(quiz);
+        }
+
+        public Quiz returnQuizById(int id) {
+            /* If id is less than the size of the list then return null, this is to avoid error 500 and let the method on
+               the controller handle the response */
+            if (this.quizList.size() < id) {
+                return null;
+            } else {
+                return this.quizList.get(id - 1);
+            }
+        }
+
+        public int size() {
+            return this.quizList.size();
+        }
+
+        public List<Quiz> getQuizList() {
+            return quizList;
+        }
+
+        public void setQuizList(List<Quiz> quizList) {
+            this.quizList = quizList;
+        }
+    }
+  learner_created: true
+- name: src/engine/restcontrollers/QuizController.java
+  visible: true
+  text: |
+    package engine.restcontrollers;
+
+    import engine.QuizStorage;
+    import engine.dto.CreateNewQuiz;
+    import engine.dto.QuizResult;
+    import engine.entities.Quiz;
+    import org.apache.coyote.Response;
+    import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.http.ResponseEntity;
+    import org.springframework.validation.annotation.Validated;
+    import org.springframework.web.bind.annotation.*;
+
+    import javax.validation.Valid;
+
+    @RestController
+    @RequestMapping("/api")
+    @Validated
+    public class QuizController {
+
+        private QuizStorage quizStorage;
+
+        @Autowired
+        public QuizController(QuizStorage quizStorage) {
+            this.quizStorage = quizStorage;
+        }
+
+        @GetMapping("/quizzes/{id}")
+        public ResponseEntity<?> getSpecificQuiz(@PathVariable int id) {
+            Quiz tempQuiz = this.quizStorage.returnQuizById(id);
+
+            if (tempQuiz == null) {
+                return ResponseEntity.notFound().build();
+            } else {
+                return ResponseEntity.ok().body(tempQuiz);
+            }
+        }
+
+        @GetMapping("quizzes")
+        public ResponseEntity<?> getAllQuizzes() {
+            //Keeping this in case it should return notFound for the list being empty
+    //        if (this.quizStorage.size() == 0) {
+    //            return ResponseEntity.notFound().build();
+    //        } else {
+                return ResponseEntity.ok().body(this.quizStorage.getQuizList());
+    //        }
+        }
+
+
+        @PostMapping("/quizzes")
+        public ResponseEntity<?> createNewQuiz(@Valid @RequestBody CreateNewQuiz newQuiz) {
+            Quiz tempQuiz = new Quiz(newQuiz.getTitle(), newQuiz.getText(), newQuiz.getOptions(), newQuiz.getAnswer());
+
+            this.quizStorage.addQuiz(tempQuiz);
+            return ResponseEntity.ok().body(tempQuiz);
+        }
+
+        @PostMapping("quizzes/{id}/solve")
+        public ResponseEntity<?> solveSpecificQuiz(@PathVariable int id, @RequestParam(name = "answer") int index) {
+            Quiz tempQuiz = this.quizStorage.returnQuizById(id);
+
+            // If quiz is not found
+            if (tempQuiz == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            // Response depending on the index input by user
+            if (!(tempQuiz.getAnswer() == index)) {
+                return ResponseEntity.ok().body(new QuizResult(false, "Wrong answer! Please, try again."));
+            } else {
+                return ResponseEntity.ok().body(new QuizResult(true, "Congratulations, you're right!"));
+            }
+        }
+    }
+  learner_created: true
+- name: src/engine/dto/QuizResult.java
+  visible: true
+  text: |
+    package engine.dto;
+
+    public class QuizResult {
+
+        private boolean success;
+
+        private String feedback;
+
+        public QuizResult() {
+        }
+
+        public QuizResult(boolean success, String feedback) {
+            this.success = success;
+            this.feedback = feedback;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public void setSuccess(boolean success) {
+            this.success = success;
+        }
+
+        public String getFeedback() {
+            return feedback;
+        }
+
+        public void setFeedback(String feedback) {
+            this.feedback = feedback;
+        }
+    }
+  learner_created: true
+- name: src/engine/entities/Quiz.java
+  visible: true
+  text: |
+    package engine.entities;
+
+    import com.fasterxml.jackson.annotation.JsonIgnore;
+
+    import javax.validation.constraints.Max;
+    import javax.validation.constraints.Min;
+    import java.util.List;
+    import java.util.Objects;
+
+    public class Quiz {
+        @JsonIgnore
+        private static int nextInt = 1;
+        private int id;
+        private String title;
+        private String text;
+        private List<String> options;
+        @JsonIgnore
+        private int answer;
+
+        public Quiz() {
+        }
+
+        public Quiz(String title, String text, List<String> options, int answer) {
+            this.id = nextInt++;
+            this.title = title;
+            this.text = text;
+            this.options = options;
+            this.answer = answer; // Answer must be -1 for future stages I guess, because it references the index position
+        }
+
+        public int getId() {
+            return id;
+        }
+
+        public void setId(int id) {
+            this.id = id;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public List<String> getOptions() {
+            return options;
+        }
+
+        public void setOptions(List<String> options) {
+            this.options = options;
+        }
+
+        public int getAnswer() {
+            return answer;
+        }
+
+        public void setAnswer(int answer) {
+            this.answer = answer;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Quiz quiz = (Quiz) o;
+            return Objects.equals(title, quiz.title) && Objects.equals(text, quiz.text) && Objects.equals(options, quiz.options);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(title, text, options);
+        }
+
+        @Override
+        public String toString() {
+            return "Quiz{" +
+                    "title='" + title + '\'' +
+                    ", text='" + text + '\'' +
+                    ", options=" + options +
+                    '}';
+        }
+    }
+  learner_created: true
+- name: src/engine/dto/AnswerQuiz.java
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/91/stages/506/implement#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Congratulations!
+  time: "Fri, 07 Jul 2023 04:57:02 UTC"
 record: -1

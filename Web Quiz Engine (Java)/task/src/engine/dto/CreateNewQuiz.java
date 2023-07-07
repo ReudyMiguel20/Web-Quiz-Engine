@@ -1,27 +1,30 @@
 package engine.dto;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
+import javax.validation.constraints.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CreateNewQuiz {
 
+    @NotEmpty
     private String title;
+    @NotEmpty
     private String text;
+
+    @Size(min = 2)
+    @NotEmpty
     private List<String> options;
 
-    @Min(value = 0)
-    @Max(value = 4)
-    private int answer;
+    private List<Integer> answer;
 
     public CreateNewQuiz() {
     }
 
-    public CreateNewQuiz(String title, String text, List<String> options, int answer) {
+    public CreateNewQuiz(@NotBlank String title, @NotBlank String text, List<String> options, @NotNull List<Integer> answer) {
         this.title = title;
         this.text = text;
         this.options = options;
-        this.answer = answer;
+        this.answer = new ArrayList<>();
     }
 
     public String getTitle() {
@@ -48,11 +51,11 @@ public class CreateNewQuiz {
         this.options = options;
     }
 
-    public int getAnswer() {
+    public List<Integer> getAnswer() {
         return answer;
     }
 
-    public void setAnswer(int answer) {
+    public void setAnswer(List<Integer> answer) {
         this.answer = answer;
     }
 }

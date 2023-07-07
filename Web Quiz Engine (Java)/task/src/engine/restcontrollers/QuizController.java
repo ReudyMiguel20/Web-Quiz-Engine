@@ -1,6 +1,7 @@
 package engine.restcontrollers;
 
 import engine.QuizStorage;
+import engine.dto.AnswerQuiz;
 import engine.dto.CreateNewQuiz;
 import engine.dto.QuizResult;
 import engine.entities.Quiz;
@@ -11,6 +12,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -55,8 +57,10 @@ public class QuizController {
     }
 
     @PostMapping("quizzes/{id}/solve")
-    public ResponseEntity<?> solveSpecificQuiz(@PathVariable int id, @RequestParam(name = "answer") int index) {
+    public ResponseEntity<?> solveSpecificQuiz(@PathVariable int id, @RequestBody AnswerQuiz answerQuiz) {
+        // Initializing variables and setting up values
         Quiz tempQuiz = this.quizStorage.returnQuizById(id);
+        List<Integer> answers = answerQuiz.getAnswer();
 
         // If quiz is not found
         if (tempQuiz == null) {
@@ -64,7 +68,8 @@ public class QuizController {
         }
 
         // Response depending on the index input by user
-        if (!(tempQuiz.getAnswer() == index)) {
+        // Probably want to verify whatever the boolean field return here
+        if (!this.quizStorage.verifyAnswerQuiz(tempQuiz, answers)) {
             return ResponseEntity.ok().body(new QuizResult(false, "Wrong answer! Please, try again."));
         } else {
             return ResponseEntity.ok().body(new QuizResult(true, "Congratulations, you're right!"));
