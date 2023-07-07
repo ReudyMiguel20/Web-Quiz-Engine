@@ -5,6 +5,7 @@ import engine.dto.AnswerQuiz;
 import engine.dto.CreateNewQuiz;
 import engine.dto.QuizResult;
 import engine.entities.Quiz;
+import engine.services.QuizServiceImpl;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +21,17 @@ import java.util.List;
 public class QuizController {
 
     private QuizStorage quizStorage;
+    private QuizServiceImpl quizService;
 
     @Autowired
-    public QuizController(QuizStorage quizStorage) {
+    public QuizController(QuizStorage quizStorage, QuizServiceImpl quizService) {
+        this.quizService = quizService;
         this.quizStorage = quizStorage;
     }
 
     @GetMapping("/quizzes/{id}")
     public ResponseEntity<?> getSpecificQuiz(@PathVariable int id) {
-        Quiz tempQuiz = this.quizStorage.returnQuizById(id);
+        Quiz tempQuiz = this.quizService.findById(id);
 
         if (tempQuiz == null) {
             return ResponseEntity.notFound().build();
@@ -39,12 +42,7 @@ public class QuizController {
 
     @GetMapping("quizzes")
     public ResponseEntity<?> getAllQuizzes() {
-        //Keeping this in case it should return notFound for the list being empty
-//        if (this.quizStorage.size() == 0) {
-//            return ResponseEntity.notFound().build();
-//        } else {
-            return ResponseEntity.ok().body(this.quizStorage.getQuizList());
-//        }
+            return ResponseEntity.ok().body(this.quizService.getAllQuizzes());
     }
 
 
@@ -52,14 +50,15 @@ public class QuizController {
     public ResponseEntity<?> createNewQuiz(@Valid @RequestBody CreateNewQuiz newQuiz) {
         Quiz tempQuiz = new Quiz(newQuiz.getTitle(), newQuiz.getText(), newQuiz.getOptions(), newQuiz.getAnswer());
 
-        this.quizStorage.addQuiz(tempQuiz);
+        this.quizService.save(tempQuiz);
+
         return ResponseEntity.ok().body(tempQuiz);
     }
 
     @PostMapping("quizzes/{id}/solve")
     public ResponseEntity<?> solveSpecificQuiz(@PathVariable int id, @RequestBody AnswerQuiz answerQuiz) {
         // Initializing variables and setting up values
-        Quiz tempQuiz = this.quizStorage.returnQuizById(id);
+        Quiz tempQuiz = this.quizService.findById(id);
         List<Integer> answers = answerQuiz.getAnswer();
 
         // If quiz is not found
@@ -67,12 +66,13 @@ public class QuizController {
             return ResponseEntity.notFound().build();
         }
 
-        // Response depending on the index input by user
-        // Probably want to verify whatever the boolean field return here
-        if (!this.quizStorage.verifyAnswerQuiz(tempQuiz, answers)) {
-            return ResponseEntity.ok().body(new QuizResult(false, "Wrong answer! Please, try again."));
-        } else {
+        //Boolean value to determine the outcome of the 'verifyAnswerQuiz' method from QuizServiceImpl
+        boolean areAnswersCorrect = this.quizService.verifyAnswerQuiz(tempQuiz, answers);
+
+        if (areAnswersCorrect) {
             return ResponseEntity.ok().body(new QuizResult(true, "Congratulations, you're right!"));
+        } else {
+            return ResponseEntity.ok().body(new QuizResult(false, "Wrong answer! Please, try again."));
         }
     }
 }

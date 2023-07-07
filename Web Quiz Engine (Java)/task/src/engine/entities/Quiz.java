@@ -1,15 +1,22 @@
 package engine.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
+import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "Quizzes")
 public class Quiz {
-    @JsonIgnore
-    private static int nextInt = 1;
+//    @JsonIgnore
+//    private static int nextInt = 1;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @NotEmpty
@@ -20,16 +27,18 @@ public class Quiz {
 
     @Size(min = 2)
     @NotEmpty
+    @ElementCollection(fetch = FetchType.EAGER)
     private List<String> options;
 
     @JsonIgnore
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
     private List<Integer> answer;
 
     public Quiz() {
     }
 
     public Quiz(@NotBlank String title, @NotBlank String text, List<String> options, List<Integer> answer) {
-        this.id = nextInt++;
         this.title = title;
         this.text = text;
         this.options = options;
