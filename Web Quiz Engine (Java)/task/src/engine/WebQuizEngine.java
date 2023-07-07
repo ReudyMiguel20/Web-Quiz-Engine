@@ -13,11 +13,4 @@ public class WebQuizEngine {
         SpringApplication.run(WebQuizEngine.class, args);
     }
 
-    @Bean
-    public Quiz defaultQuiz() {
-        return new Quiz("The Java Logo",
-                        "What is depicted on the Java logo?",
-                List.of("Robot", "Tea leaf", "Cup of coffee", "Bug"));
-    }
-
 }

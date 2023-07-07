@@ -1,15 +1,15 @@
 package engine.dto;
 
-public class QuizOutcome {
+public class QuizResult {
 
     private boolean success;
 
     private String feedback;
 
-    public QuizOutcome() {
+    public QuizResult() {
     }
 
-    public QuizOutcome(boolean success, String feedback) {
+    public QuizResult(boolean success, String feedback) {
         this.success = success;
         this.feedback = feedback;
     }

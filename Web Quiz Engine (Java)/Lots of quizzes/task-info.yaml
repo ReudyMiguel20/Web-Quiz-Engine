@@ -247,6 +247,157 @@ files:
         }
     }
   learner_created: false
+- name: src/engine/dto/QuizResult.java
+  visible: true
+  text: |
+    package engine.dto;
+
+    public class QuizOutcome {
+
+        private boolean success;
+
+        private String feedback;
+
+        public QuizOutcome() {
+        }
+
+        public QuizOutcome(boolean success, String feedback) {
+            this.success = success;
+            this.feedback = feedback;
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public void setSuccess(boolean success) {
+            this.success = success;
+        }
+
+        public String getFeedback() {
+            return feedback;
+        }
+
+        public void setFeedback(String feedback) {
+            this.feedback = feedback;
+        }
+    }
+  learner_created: true
+- name: src/engine/dto/CreateNewQuiz.java
+  visible: true
+  learner_created: true
+- name: src/engine/entities/Quiz.java
+  visible: true
+  text: |
+    package engine;
+
+    import java.util.List;
+    import java.util.Objects;
+
+    public class Quiz {
+
+        private String title;
+        private String text;
+        private List<String> options;
+
+        public Quiz() {
+        }
+
+        public Quiz(String title, String text, List<String> options) {
+            this.title = title;
+            this.text = text;
+            this.options = options;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public void setTitle(String title) {
+            this.title = title;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public List<String> getOptions() {
+            return options;
+        }
+
+        public void setOptions(List<String> options) {
+            this.options = options;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Quiz quiz = (Quiz) o;
+            return Objects.equals(title, quiz.title) && Objects.equals(text, quiz.text) && Objects.equals(options, quiz.options);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(title, text, options);
+        }
+
+        @Override
+        public String toString() {
+            return "Quiz{" +
+                    "title='" + title + '\'' +
+                    ", text='" + text + '\'' +
+                    ", options=" + options +
+                    '}';
+        }
+    }
+  learner_created: true
+- name: src/engine/restcontrollers/QuizController.java
+  visible: true
+  text: |
+    package engine;
+
+    import engine.dto.QuizOutcome;
+    import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.http.ResponseEntity;
+    import org.springframework.web.bind.annotation.*;
+
+    @RestController
+    @RequestMapping("/api")
+    public class QuizController {
+
+        private Quiz defaultQuiz;
+
+        @Autowired
+        public QuizController(Quiz defaultQuiz) {
+            this.defaultQuiz = defaultQuiz;
+        }
+
+        @GetMapping("/quiz")
+        public ResponseEntity<?> getCurrentQuiz() {
+            return ResponseEntity.ok().body(this.defaultQuiz);
+        }
+
+        @PostMapping("/quiz")
+        public ResponseEntity<?> answerCurrentQuiz(@RequestParam(name = "answer") int answerIndex) {
+            if (!(answerIndex == 2)) {
+                return ResponseEntity.ok().body(new QuizOutcome(false, "Wrong answer! Please, try again."));
+            } else {
+                return ResponseEntity.ok().body(new QuizOutcome(true, "Congratulations, you're right!"));
+            }
+        }
+    }
+  learner_created: true
+- name: src/engine/QuizStorage.java
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/91/stages/505/implement#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Congratulations!
+  time: "Fri, 07 Jul 2023 00:56:08 UTC"
 record: -1

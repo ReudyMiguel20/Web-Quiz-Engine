@@ -1,21 +1,39 @@
-package engine;
+package engine.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 import java.util.Objects;
 
 public class Quiz {
-
+    @JsonIgnore
+    private static int nextInt = 1;
+    private int id;
     private String title;
     private String text;
     private List<String> options;
+    @JsonIgnore
+    private int answer;
 
     public Quiz() {
     }
 
-    public Quiz(String title, String text, List<String> options) {
+    public Quiz(String title, String text, List<String> options, int answer) {
+        this.id = nextInt++;
         this.title = title;
         this.text = text;
         this.options = options;
+        this.answer = answer; // Answer must be -1 for future stages I guess, because it references the index position
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitle() {
@@ -40,6 +58,14 @@ public class Quiz {
 
     public void setOptions(List<String> options) {
         this.options = options;
+    }
+
+    public int getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(int answer) {
+        this.answer = answer;
     }
 
     @Override
