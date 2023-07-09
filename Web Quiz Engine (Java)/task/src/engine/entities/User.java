@@ -10,6 +10,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,10 +33,16 @@ public class User implements UserDetails {
 
     private int enabled;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Fetch(value = FetchMode.SUBSELECT)
+    private List<CompletedQuiz> completedQuizzes;
+
     @OneToMany
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     private List<Quiz> quizzes;
+
+
 
     public User() {
     }
@@ -44,6 +51,7 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.enabled = 1;
+        this.completedQuizzes = new ArrayList<>();
     }
 
     public java.lang.String getEmail() {
@@ -98,5 +106,17 @@ public class User implements UserDetails {
 
     public void setEnabled(int enabled) {
         this.enabled = enabled;
+    }
+
+    public List<CompletedQuiz> getCompletedQuizzes() {
+        return completedQuizzes;
+    }
+
+    public void setCompletedQuizzes(List<CompletedQuiz> completedQuizzes) {
+        this.completedQuizzes = completedQuizzes;
+    }
+
+    public void addNewCompletedQuiz(CompletedQuiz completedQuiz) {
+        this.completedQuizzes.add(completedQuiz);
     }
 }

@@ -9,7 +9,7 @@
 <p>Once the stage is completed, you will have a working web service with a comprehensive API.</p>
 <p>To test your API, you may write Spring Boot tests, or use a rest client like <a href="https://www.getpostman.com/product/api-client" rel="noopener noreferrer nofollow" target="_blank">postman</a> or <a href="https://gist.github.com/subfuzion/08c5d85437d5d4f00e58" rel="noopener noreferrer nofollow" target="_blank">the curl tool</a>. GET requests can be tested by accessing the URL in your browser. You can also check your application in the browser using <a href="https://reqbin.com/" rel="noopener noreferrer nofollow" target="_blank">reqbin</a>.</p>
 <h5 id="objectives">Objectives</h5>
-<p>Create <code class="language-json">GET /api/quiz</code> endpoint that returns a quiz object in JSON format. The quiz should have exactly three fields: <code class="language-json">title</code> (user) <code class="language-json">text</code> (user) and <code class="language-json">options</code> (array). To get the quiz, the client sends the <code class="language-json">GET</code> request and the server responds with the following JSON structure:</p>
+<p>Create <code class="language-json">GET /api/quiz</code> endpoint that returns a quiz object in JSON format. The quiz should have exactly three fields: <code class="language-json">title</code> (string) <code class="language-json">text</code> (string) and <code class="language-json">options</code> (array). To get the quiz, the client sends the <code class="language-json">GET</code> request and the server responds with the following JSON structure:</p>
 <pre><code class="language-json">{
   "title": "The Java Logo",
   "text": "What is depicted on the Java logo?",
@@ -22,7 +22,7 @@
 <p></p></div>
 <p> </p>
 <p>Create <code class="language-json">POST /api/quiz</code> endpoint. To solve the quiz, the client needs to pass the <code class="language-json">answer</code> request parameter representing the index of the chosen option from the <code class="language-json">options</code> array. Remember, in our service indexes start from zero.</p>
-<p>The server should return JSON with two fields: <code class="language-json">success</code> (<code class="language-json">true</code> or <code class="language-json">false</code>) and <code class="language-json">feedback</code> (just a user). There are two possible responses from the server:</p>
+<p>The server should return JSON with two fields: <code class="language-json">success</code> (<code class="language-json">true</code> or <code class="language-json">false</code>) and <code class="language-json">feedback</code> (just a string). There are two possible responses from the server:</p>
 <ul>
 <li>
 <p>If the passed answer is correct (<code class="language-json">POST</code> to <code class="language-json">/api/quiz?answer=2</code>):</p>
