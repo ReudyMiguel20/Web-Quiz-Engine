@@ -32,6 +32,8 @@ public class UserServiceImpl implements UserService {
         this.completedQuizRepository = completedQuizRepository;
     }
 
+    /* This method is used to save a new user to the database. It first checks if the user already exists in the database,
+       if not it saves the user to the database and assigns the user the role of "ROLE_USER". */
     @Override
     public void saveNewUser(User user) {
         user.setPassword(this.encoder.encode(user.getPassword()));
@@ -59,6 +61,9 @@ public class UserServiceImpl implements UserService {
         return quiz.getAuthor().equals(email);
     }
 
+
+    /* This method is used to save a completed quiz to the database. It first saves the completed quiz to the database,
+       then it adds the completed quiz to the user's list of completed quizzes, and then it updates the user in the database. */
     @Override
     public void userCompletedQuiz(CompletedQuiz completedQuiz, String email) {
         User tempUser = findUserByEmail(email);
@@ -66,34 +71,5 @@ public class UserServiceImpl implements UserService {
         this.completedQuizRepository.save(completedQuiz);
         tempUser.addNewCompletedQuiz(completedQuiz);
         updateUser(tempUser);
-
-//        for (CompletedQuiz x : tempUser.getCompletedQuizzes()) {
-//            System.out.println(x.toString());
-//        }
     }
-
-//    @Override
-//    public Page<CompletedQuiz> returnAllUserCompletedQuizzes(User user) {
-//        Pageable pageable = PageRequest.of(0, 10, Sort.by("completedAt").descending());
-//
-//
-//
-//        List<CompletedQuiz> completedQuizzes = user.getCompletedQuizzes()
-//                .stream().sorted((cq1, cq2) -> cq2.getCompletedAt().compareTo(cq1.getCompletedAt())).toList();
-//
-//
-//
-//    }
-//
-//    @Override
-//    public void getUserCompletedQuizzes(String email) {
-//        Pageable paging = PageRequest.of(0, 10);
-//        User tempUser = findUserByEmail(email);
-//        Sort sortByCompletionTime = Sort.by("completedAt");
-//
-//        // Q: Why does this not work?
-//
-//        List<CompletedQuiz> completedQuizzes= tempUser.getCompletedQuizzes();
-//
-//    }
 }
