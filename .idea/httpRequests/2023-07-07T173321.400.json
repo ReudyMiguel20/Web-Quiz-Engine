@@ -1,0 +1,6 @@
+{
+  "timestamp": "2023-07-07T21:33:21.171+00:00",
+  "status": 400,
+  "error": "Bad Request",
+  "path": "/api/quizzes/id"
+}

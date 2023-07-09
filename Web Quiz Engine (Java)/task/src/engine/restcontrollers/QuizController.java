@@ -1,14 +1,14 @@
 package engine.restcontrollers;
 
-import engine.QuizStorage;
 import engine.dto.AnswerQuiz;
 import engine.dto.CreateNewQuiz;
 import engine.dto.QuizResult;
 import engine.entities.Quiz;
-import engine.services.QuizServiceImpl;
-import org.apache.coyote.Response;
+import engine.services.servicesimpl.QuizServiceImpl;
+import engine.services.servicesimpl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,14 +19,14 @@ import java.util.List;
 @RequestMapping("/api")
 @Validated
 public class QuizController {
-
-    private QuizStorage quizStorage;
+    
     private QuizServiceImpl quizService;
+    private UserServiceImpl userService;
 
     @Autowired
-    public QuizController(QuizStorage quizStorage, QuizServiceImpl quizService) {
+    public QuizController(QuizServiceImpl quizService, UserServiceImpl userService) {
         this.quizService = quizService;
-        this.quizStorage = quizStorage;
+        this.userService = userService;
     }
 
     @GetMapping("/quizzes/{id}")
@@ -40,22 +40,22 @@ public class QuizController {
         }
     }
 
-    @GetMapping("quizzes")
+    @GetMapping("/quizzes")
     public ResponseEntity<?> getAllQuizzes() {
             return ResponseEntity.ok().body(this.quizService.getAllQuizzes());
     }
 
 
     @PostMapping("/quizzes")
-    public ResponseEntity<?> createNewQuiz(@Valid @RequestBody CreateNewQuiz newQuiz) {
-        Quiz tempQuiz = new Quiz(newQuiz.getTitle(), newQuiz.getText(), newQuiz.getOptions(), newQuiz.getAnswer());
+    public ResponseEntity<?> createNewQuiz(Authentication auth, @Valid @RequestBody CreateNewQuiz newQuiz) {
+        Quiz tempQuiz = new Quiz(newQuiz.getTitle(), newQuiz.getText(), newQuiz.getOptions(), newQuiz.getAnswer(), auth.getName());
 
         this.quizService.save(tempQuiz);
 
         return ResponseEntity.ok().body(tempQuiz);
     }
 
-    @PostMapping("quizzes/{id}/solve")
+    @PostMapping("/quizzes/{id}/solve")
     public ResponseEntity<?> solveSpecificQuiz(@PathVariable int id, @RequestBody AnswerQuiz answerQuiz) {
         // Initializing variables and setting up values
         Quiz tempQuiz = this.quizService.findById(id);
@@ -73,6 +73,25 @@ public class QuizController {
             return ResponseEntity.ok().body(new QuizResult(true, "Congratulations, you're right!"));
         } else {
             return ResponseEntity.ok().body(new QuizResult(false, "Wrong answer! Please, try again."));
+        }
+    }
+
+    @DeleteMapping("/quizzes/{id}")
+    public ResponseEntity<?> deleteQuiz(Authentication auth, @PathVariable int id) {
+        String userEmail = auth.getName();
+        Quiz tempQuiz = this.quizService.findById(id);
+
+        if (tempQuiz == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        boolean isUserOwnerOfQuiz = this.userService.isUserOwnerOfQuiz(userEmail, tempQuiz);
+
+        if (isUserOwnerOfQuiz) {
+            this.quizService.deleteQuiz(tempQuiz);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.status(403).build();
         }
     }
 }

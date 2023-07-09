@@ -5,44 +5,50 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
-import java.util.ArrayList;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 @Table(name = "Quizzes")
 public class Quiz {
-//    @JsonIgnore
-//    private static int nextInt = 1;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @NotEmpty
-    private String title;
+    private java.lang.String title;
 
     @NotEmpty
-    private String text;
+    private java.lang.String text;
 
     @Size(min = 2)
     @NotEmpty
     @ElementCollection(fetch = FetchType.EAGER)
-    private List<String> options;
+    private List<java.lang.String> options;
 
     @JsonIgnore
     @ElementCollection(fetch = FetchType.EAGER)
     @Fetch(value = FetchMode.SUBSELECT)
     private List<Integer> answer;
 
+    @JsonIgnore
+    @Column(name = "author")
+    private String author;
+
+
     public Quiz() {
     }
 
-    public Quiz(@NotBlank String title, @NotBlank String text, List<String> options, List<Integer> answer) {
+    public Quiz(@NotBlank java.lang.String title, @NotBlank java.lang.String text, List<java.lang.String> options, List<Integer> answer, java.lang.String author ) {
         this.title = title;
         this.text = text;
         this.options = options;
-        this.answer = answer; // Answer must be -1 for future stages I guess, because it references the index position
+        this.answer = answer;
+        this.author = author;
     }
 
     public int getId() {
@@ -53,27 +59,27 @@ public class Quiz {
         this.id = id;
     }
 
-    public String getTitle() {
+    public java.lang.String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(java.lang.String title) {
         this.title = title;
     }
 
-    public String getText() {
+    public java.lang.String getText() {
         return text;
     }
 
-    public void setText(String text) {
+    public void setText(java.lang.String text) {
         this.text = text;
     }
 
-    public List<String> getOptions() {
+    public List<java.lang.String> getOptions() {
         return options;
     }
 
-    public void setOptions(List<String> options) {
+    public void setOptions(List<java.lang.String> options) {
         this.options = options;
     }
 
@@ -85,13 +91,13 @@ public class Quiz {
         this.answer = answer;
     }
 
-    //    public int getAnswer() {
-//        return answer;
-//    }
-//
-//    public void setAnswer(int answer) {
-//        this.answer = answer;
-//    }
+    public java.lang.String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(java.lang.String author) {
+        this.author = author;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -107,7 +113,7 @@ public class Quiz {
     }
 
     @Override
-    public String toString() {
+    public java.lang.String toString() {
         return "Quiz{" +
                 "title='" + title + '\'' +
                 ", text='" + text + '\'' +

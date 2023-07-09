@@ -1,51 +1,46 @@
-package engine;
+package engine.services.servicesimpl;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import engine.entities.Quiz;
-import org.springframework.stereotype.Component;
+import engine.repositories.QuizRepository;
+import engine.services.QuizService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-@Component
-public class QuizStorage {
+@Service
+public class QuizServiceImpl implements QuizService {
 
-    @JsonUnwrapped
-    private List<Quiz> quizList;
+    private QuizRepository quizRepository;
 
-    public QuizStorage() {
-        this.quizList = new ArrayList<>();
+    @Autowired
+    public QuizServiceImpl(QuizRepository quizRepository) {
+        this.quizRepository = quizRepository;
     }
 
-    public void addQuiz(Quiz quiz) {
-        this.quizList.add(quiz);
+
+    @Override
+    public void save(Quiz quiz) {
+        this.quizRepository.save(quiz);
     }
 
-    public Quiz returnQuizById(int id) {
-        /* If id is less than the size of the list then return null, this is to avoid error 500 and let the method on
-           the controller handle the response */
-        if (this.quizList.size() < id) {
-            return null;
-        } else {
-            return this.quizList.get(id - 1);
-        }
+    @Override
+    public List<Quiz> getAllQuizzes() {
+        return this.quizRepository.findAll();
     }
 
-    public int size() {
-        return this.quizList.size();
+    @Override
+    public Quiz findById(int id) {
+        return this.quizRepository.findById(id)
+                .orElse(null);
     }
 
-    public List<Quiz> getQuizList() {
-        return quizList;
+    @Override
+    public void deleteQuiz(Quiz quiz) {
+        this.quizRepository.delete(quiz);
     }
 
-    public void setQuizList(List<Quiz> quizList) {
-        this.quizList = quizList;
-    }
-
-    // Logic for checking if the user answers is/are correct
+    @Override
     public boolean verifyAnswerQuiz(Quiz quiz, List<Integer> answers) {
         List<Integer> correctAnswers = quiz.getAnswer();
 

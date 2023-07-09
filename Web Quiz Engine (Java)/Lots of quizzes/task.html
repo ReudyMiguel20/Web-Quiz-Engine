@@ -1,33 +1,33 @@
 <div class="step-text">
-<p></p><h5 id="description">Description</h5><p>At this stage, you will improve the web service to create, get and solve lots of quizzes, not just a single one. All quizzes should be stored in the service's memory, without an external storage.</p><p>The format of requests and responses will be similar to the first stage, but you will make the API more REST-friendly and extendable. You will add four operations:</p><ul><li><p><code class="language-json">POST</code> <code class="language-json">/api/quizzes</code> to create a new quiz;</p></li><li><p><code class="language-json">GET</code> <code class="language-json">/api/quizzes/{id}</code> to get a quiz by its id;</p></li><li><p><code class="language-json">GET</code> <code class="language-json">/api/quizzes </code>to get all available quizzes; and</p></li><li><p><code class="language-json">POST</code> <code class="language-json">/api/quizzes/{id}/solve?answer={index} </code>to solve a specific quiz.</p></li></ul><p>Each of these operations are described below in detail.</p><h5 id="objectives">Objectives</h5><ul><li><p>Create the<code class="language-json">POST</code> <code class="language-json">/api/quizzes </code>endpoint for adding a new quiz. The client needs to send a JSON as the request's body that should contain the four fields: <code class="language-json">title</code> (a string), <code class="language-json">text</code> (a string), <code class="language-json">options</code> (an array of strings) and <code class="language-json">answer</code> (integer index of the correct option). At this moment, all the keys are optional:</p></li></ul><pre><code class="language-json">{
-  "title": "&lt;string&gt;",
-  "text": "&lt;string&gt;",
-  "options": ["&lt;string 1&gt;","&lt;string 2&gt;","&lt;string 3&gt;", ...],
+<p></p><h5 id="description">Description</h5><p>At this stage, you will improve the web service to create, get and solve lots of quizzes, not just a single one. All quizzes should be stored in the service's memory, without an external storage.</p><p>The format of requests and responses will be similar to the first stage, but you will make the API more REST-friendly and extendable. You will add four operations:</p><ul><li><p><code class="language-json">POST</code> <code class="language-json">/api/quizzes</code> to create a new quiz;</p></li><li><p><code class="language-json">GET</code> <code class="language-json">/api/quizzes/{id}</code> to get a quiz by its id;</p></li><li><p><code class="language-json">GET</code> <code class="language-json">/api/quizzes </code>to get all available quizzes; and</p></li><li><p><code class="language-json">POST</code> <code class="language-json">/api/quizzes/{id}/solve?answer={index} </code>to solve a specific quiz.</p></li></ul><p>Each of these operations are described below in detail.</p><h5 id="objectives">Objectives</h5><ul><li><p>Create the<code class="language-json">POST</code> <code class="language-json">/api/quizzes </code>endpoint for adding a new quiz. The client needs to send a JSON as the request's body that should contain the four fields: <code class="language-json">title</code> (a user), <code class="language-json">text</code> (a user), <code class="language-json">options</code> (an array of strings) and <code class="language-json">answer</code> (integer index of the correct option). At this moment, all the keys are optional:</p></li></ul><pre><code class="language-json">{
+  "title": "&lt;user&gt;",
+  "text": "&lt;user&gt;",
+  "options": ["&lt;user 1&gt;","&lt;user 2&gt;","&lt;user 3&gt;", ...],
   "answer": &lt;integer&gt;
-}</code></pre><p>If <code class="language-json">answer</code> equals <code class="language-json">2</code>, it corresponds to the third item from the <code class="language-json">options</code> array (i.e. <code class="language-json">"&lt;string 3&gt;"</code>).</p><p>The server response is a JSON with four fields: <code class="language-json">id</code>, <code class="language-json">title</code>, <code class="language-json">text</code> and <code class="language-json">options</code>:</p><pre><code class="language-json">{
+}</code></pre><p>If <code class="language-json">answer</code> equals <code class="language-json">2</code>, it corresponds to the third item from the <code class="language-json">options</code> array (i.e. <code class="language-json">"&lt;user 3&gt;"</code>).</p><p>The server response is a JSON with four fields: <code class="language-json">id</code>, <code class="language-json">title</code>, <code class="language-json">text</code> and <code class="language-json">options</code>:</p><pre><code class="language-json">{
   "id": &lt;integer&gt;,
-  "title": "&lt;string&gt;",
-  "text": "&lt;string&gt;",
-  "options": ["&lt;string 1&gt;","&lt;string 2&gt;","&lt;string 3&gt;", ...]
+  "title": "&lt;user&gt;",
+  "text": "&lt;user&gt;",
+  "options": ["&lt;user 1&gt;","&lt;user 2&gt;","&lt;user 3&gt;", ...]
 }</code></pre><p>The <code class="language-json">id</code> field is a generated unique integer identifier for the quiz. Also, the response may or may not include the <code class="language-json">answer</code> field depending on your wishes. This is not very important for this operation.</p><p>At this moment, it is admissible if a creation request does not contain some quiz data. In the next stages, we will improve the service to avoid some server errors.</p><ul><li><p>Create the <code class="language-json">GET</code> <code class="language-json">/api/quizzes/{id} </code>endpoint to get a quiz by <code class="language-json">id</code>. The server must response with a JSON in the following format:</p></li></ul><pre><code class="language-json">{
   "id": &lt;integer&gt;,
-  "title": "&lt;string&gt;",
-  "text": "&lt;string&gt;",
-  "options": ["&lt;string 1&gt;","&lt;string 2&gt;","&lt;string 3&gt;", ...]
+  "title": "&lt;user&gt;",
+  "text": "&lt;user&gt;",
+  "options": ["&lt;user 1&gt;","&lt;user 2&gt;","&lt;user 3&gt;", ...]
 }</code></pre><p></p><div class="alert alert-warning"><p>The response <strong>must not</strong> include the <code class="language-json">answer</code> field, otherwise, any user will be able to find the correct answer for any quiz.</p></div><p></p><p>If a quiz with the specified id does not exist, the server should return the <code class="language-json">404 (Not found)</code> status code.</p><ul><li><p>Create the <code class="language-json">GET</code> <code class="language-json">/api/quizzes</code> endpoint to get all existing quizzes in the service. The response contains a JSON array of quizzes like the following:</p></li></ul><pre><code class="language-json">[
   {
     "id": &lt;integer&gt;,
-    "title": "&lt;string&gt;",
-    "text": "&lt;string&gt;",
-    "options": ["&lt;string 1&gt;","&lt;string 2&gt;","&lt;string 3&gt;", ...]
+    "title": "&lt;user&gt;",
+    "text": "&lt;user&gt;",
+    "options": ["&lt;user 1&gt;","&lt;user 2&gt;","&lt;user 3&gt;", ...]
   },
   {
     "id": &lt;integer&gt;,
-    "title": "&lt;string&gt;",
-    "text": "&lt;string&gt;",
-    "options": ["&lt;string 1&gt;","&lt;string 2&gt;", ...]
+    "title": "&lt;user&gt;",
+    "text": "&lt;user&gt;",
+    "options": ["&lt;user 1&gt;","&lt;user 2&gt;", ...]
   }
-]</code></pre><p></p><div class="alert alert-warning"><p>The response <strong>must not</strong> include the <code class="language-json">answer</code> field, otherwise, any user will be able to find the correct answer for any quiz.</p></div><p></p><p>If there are no quizzes, the service returns an empty JSON array: <code class="language-json">[]</code>.</p><p>In both cases, the status code is <code class="language-json">200 (OK)</code>.</p><ul><li><p>Create the <code class="language-json">POST</code> <code class="language-json">/api/quizzes/{id}/solve?answer={index}</code> endpoint to solve a quiz by its id. The client passes the <code class="language-json">answer</code> request parameter which is the index of a chosen option from <code class="language-json">options</code> array. As before, it starts from zero.</p></li></ul><p>The service returns a JSON with two fields: <code class="language-json">success</code> (<code class="language-json">true</code> or <code class="language-json">false</code>) and <code class="language-json">feedback</code> (just a string).</p><p>If the passed answer is correct, e.g., <code class="language-json">POST</code> to <code class="language-json">/api/quizzes/1/solve?answer=2</code>:</p><pre><code class="language-json">{
+]</code></pre><p></p><div class="alert alert-warning"><p>The response <strong>must not</strong> include the <code class="language-json">answer</code> field, otherwise, any user will be able to find the correct answer for any quiz.</p></div><p></p><p>If there are no quizzes, the service returns an empty JSON array: <code class="language-json">[]</code>.</p><p>In both cases, the status code is <code class="language-json">200 (OK)</code>.</p><ul><li><p>Create the <code class="language-json">POST</code> <code class="language-json">/api/quizzes/{id}/solve?answer={index}</code> endpoint to solve a quiz by its id. The client passes the <code class="language-json">answer</code> request parameter which is the index of a chosen option from <code class="language-json">options</code> array. As before, it starts from zero.</p></li></ul><p>The service returns a JSON with two fields: <code class="language-json">success</code> (<code class="language-json">true</code> or <code class="language-json">false</code>) and <code class="language-json">feedback</code> (just a user).</p><p>If the passed answer is correct, e.g., <code class="language-json">POST</code> to <code class="language-json">/api/quizzes/1/solve?answer=2</code>:</p><pre><code class="language-json">{
   "success": true,
   "feedback": "Congratulations, you're right!"
 }</code></pre><ul><li><p>If the answer is incorrect (e.g., <code class="language-json">POST</code> to <code class="language-json">/api/quizzes/1/solve?answer=1</code>:</p></li></ul><pre><code class="language-json">{
