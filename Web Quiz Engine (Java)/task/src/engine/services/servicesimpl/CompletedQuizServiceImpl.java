@@ -30,7 +30,7 @@ public class CompletedQuizServiceImpl implements CompletedQuizService {
         Sort sortByCompletedAtDesc = Sort.by("completedAt").descending();
         Pageable pageable = PageRequest.of(pageNumber, 10, sortByCompletedAtDesc);
 
-        // Return the page of completed quizzes
+        // Return the page of completed quizze
         return this.completedQuizRepository.findAllByUsername(username, pageable);
     }
 }

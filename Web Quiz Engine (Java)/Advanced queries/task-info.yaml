@@ -1697,6 +1697,12 @@ files:
 - name: src/engine/services/servicesimpl/CompletedQuizServiceImpl.java
   visible: true
   learner_created: true
+- name: src/resources/static/test.js
+  visible: true
+  learner_created: true
+- name: src/resources/static/index.html
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/8257#comment
 status: Solved
 feedback:

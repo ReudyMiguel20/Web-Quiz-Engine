@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final QuizServiceImpl quizService;
     private final CompletedQuizRepository completedQuizRepository;
     private final AuthoritiesServiceImpl authoritiesService;
     private final PasswordEncoder encoder;
@@ -22,11 +21,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder encoder,
-                           AuthoritiesServiceImpl authoritiesService, QuizServiceImpl quizService,
-                           CompletedQuizRepository completedQuizRepository)
+                           AuthoritiesServiceImpl authoritiesService, CompletedQuizRepository completedQuizRepository)
     {
         this.userRepository = userRepository;
-        this.quizService = quizService;
         this.authoritiesService = authoritiesService;
         this.encoder = encoder;
         this.completedQuizRepository = completedQuizRepository;

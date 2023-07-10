@@ -17,13 +17,11 @@ public class QuizServiceImpl implements QuizService {
 
     private QuizRepository quizRepository;
 
-
     @Autowired
     public QuizServiceImpl(QuizRepository quizRepository) {
         this.quizRepository = quizRepository;
 
     }
-
 
     @Override
     public void save(Quiz quiz) {

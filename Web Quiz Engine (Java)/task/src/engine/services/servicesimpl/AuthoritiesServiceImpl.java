@@ -18,6 +18,7 @@ public class AuthoritiesServiceImpl implements AuthoritiesService {
     }
 
 
+    // Assign the user role to a user when they register for an account.
     @Override
     public void assignUserRole(User user) {
         Authorities tempAuthority = new Authorities(user.getEmail(), "ROLE_USER");
