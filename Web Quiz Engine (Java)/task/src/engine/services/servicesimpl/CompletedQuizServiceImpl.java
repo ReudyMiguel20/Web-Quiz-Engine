@@ -25,6 +25,11 @@ public class CompletedQuizServiceImpl implements CompletedQuizService {
         this.completedQuizRepository.save(completedQuiz);
     }
 
+    @Override
+    public Page<CompletedQuiz> findAllByUsername(String username, Pageable pageable) {
+        return this.completedQuizRepository.findAllByUsername(username, pageable);
+    }
+
     public Page<CompletedQuiz> getCompletedQuizzes(String username, int pageNumber) {
         // Query the database for all completed quizzes by a user, sorted by completedAt in descending order
         Sort sortByCompletedAtDesc = Sort.by("completedAt").descending();
@@ -33,4 +38,6 @@ public class CompletedQuizServiceImpl implements CompletedQuizService {
         // Return the page of completed quizze
         return this.completedQuizRepository.findAllByUsername(username, pageable);
     }
+
+
 }

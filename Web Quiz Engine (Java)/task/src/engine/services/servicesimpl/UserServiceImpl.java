@@ -5,6 +5,8 @@ import engine.entities.Quiz;
 import engine.entities.User;
 import engine.repositories.CompletedQuizRepository;
 import engine.repositories.UserRepository;
+import engine.services.AuthoritiesService;
+import engine.services.CompletedQuizService;
 import engine.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,19 +16,19 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final CompletedQuizRepository completedQuizRepository;
-    private final AuthoritiesServiceImpl authoritiesService;
+    private final CompletedQuizService completedQuizService;
+    private final AuthoritiesService authoritiesService;
     private final PasswordEncoder encoder;
 
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, PasswordEncoder encoder,
-                           AuthoritiesServiceImpl authoritiesService, CompletedQuizRepository completedQuizRepository)
+                           AuthoritiesService authoritiesService, CompletedQuizService completedQuizService)
     {
         this.userRepository = userRepository;
         this.authoritiesService = authoritiesService;
         this.encoder = encoder;
-        this.completedQuizRepository = completedQuizRepository;
+        this.completedQuizService = completedQuizService;
     }
 
     /* This method is used to save a new user to the database. It first checks if the user already exists in the database,
@@ -65,8 +67,11 @@ public class UserServiceImpl implements UserService {
     public void userCompletedQuiz(CompletedQuiz completedQuiz, String email) {
         User tempUser = findUserByEmail(email);
 
-        this.completedQuizRepository.save(completedQuiz);
+        // Save the completed quiz to the database
+        this.completedQuizService.save(completedQuiz);
         tempUser.addNewCompletedQuiz(completedQuiz);
         updateUser(tempUser);
     }
+
+
 }
